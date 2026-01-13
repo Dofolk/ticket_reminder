@@ -5,13 +5,22 @@
 
 import os
 
+from datetime import datetime
 from inspect import currentframe
 
-def debug_print(msg):
+def debug_print(*args, **kwargs):
     frame = currentframe().f_back
     filename = os.path.basename(frame.f_code.co_filename)
     line_num = frame.f_lineno
-    print(f"<{filename}> line {line_num}: {msg}")
+    msg = [str(arg) for arg in args]
+    if kwargs:
+        msg.append(str(kwargs))
+    if not msg:
+        msg = ''
+    print(f"{round_time()} <{filename}> line {line_num}: {' '.join(msg)}")
+
+def round_time():
+    return datetime.fromtimestamp(round(datetime.now().timestamp(),3)).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
 def date_split(date_str: str):
     date_list = []
@@ -24,4 +33,5 @@ def date_split(date_str: str):
     return date_list
 
 if __name__ == '__main__':
-    debug_print(date_split('2026/04/02 (四) ~ 2026/04/07 (二)'))
+    debug_print(round_time())
+    #debug_print(date_split('2026/04/02 (四) ~ 2026/04/07 (二)'))
