@@ -55,31 +55,40 @@ def get_table_contents(url = URLs['thsr']):
             # 定位表格
                 table_locator = page.locator("table", has=page.locator("text='假期名稱'"))
                 table_locator.wait_for()
-                print("已找到表格，正在讀取資料...")
+                debug_print("已找到表格，正在讀取資料...")
             except:
                 print("找不到表格。")
                 browser.close()
                 return
 
-        rows = table_locator.locator("tr").all()
-        
-        table_data = []
-        headers = []
+            rows = table_locator.locator("tr").all()
+            row_span_prev = []
+            table_col_num = 0
+            title_mapping = {}
 
-        for i, row in enumerate(rows):
-            # 抓取該列所有的格子 (包含 th 和 td)
-            cells = row.locator("th, td").all()
-            
-            # 將每個格子的文字取出來，並去除多餘空白
-            row_text = [cell.inner_text().strip() for cell in cells]
-            
-            # 第一列是標題
-            if i == 0:
-                headers = row_text
-            else:
-                if row_text:
-                    table_data.append(row_text)
-        print(headers, table_data)
+            for idx, row in enumerate(rows):
+                # 抓取該列所有的格子 (包含 th 和 td)
+                cells = row.locator("th, td").all()
+                
+                # 將每個格子的文字取出來，並去除多餘空白
+                row_text = [cell.inner_text().strip() for cell in cells]
+                row_span_prev = row_text
+                # 第一列是標題，先記錄表格有幾個column之後就可以pass掉
+                if idx == 0:
+                    table_col_num = len(row_text)
+                    continue
+                # 開始處理表格內的資訊，先確認有沒有符合column數量
+                # 接著對數量2跟4的進行對應的處理，只會有2跟4，因為會共用的column就是假期期間跟假期名稱
+                if len(row_text) == table_col_num:
+                    debug_print(f'{row_text=}')
+                    fes_name, book_date, duration, _ = row_text
+                    fes_list.append(fes_name)
+                    table[fes_name]['duration'] = duration
+                    table[fes_name]['book_date'] = book_date
+                else:
+                    # flag
+                    title_mapping
+                    
 
         browser.close()
     return fes_list, table
@@ -97,4 +106,7 @@ if __name__ == "__main__":
     # fes_list, table_contents = get_table_contents()
     # toast = win_toast(fes_list[0], table_contents[fes_list[0]])
     # debug_print(toast.show())
-    print(get_table_contents(URLs['tr']))
+    debug_print(get_table_contents(URLs['tr']))
+    debug_print(get_table_contents(URLs['thsr']))
+    # debug_print(f'{fes_list=}')
+    # debug_print(f'{table=}')
