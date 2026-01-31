@@ -122,5 +122,6 @@ if __name__ == "__main__":
     # fes_list, table_contents = get_table_contents()
     # toast = win_toast(fes_list[0], table_contents[fes_list[0]])
     thsr_fes, thsr_table = get_table_contents(URLs['thsr'])
-    tr_fes, tr_table = get_table_contents(URLs['tr'])
-    print(thsr_table, tr_table)
+    # tr_fes, tr_table = get_table_contents(URLs['tr'])
+    print(f'{thsr_fes=}')
+    print(f'{thsr_table=}')
