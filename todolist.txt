@@ -1,0 +1,8 @@
+[OK, 可以把台鐵的資料都處理好了] 把台鐵的部分做好，現在只有貼上Gemini的結果，要再進一步把資料格式整理好
+[OK, Gemini的結果review OK 也測過了]要做日期的變換2026/1/2=>字串變成時間格式，之後才好判斷哪時候該作動
+做logger()來記錄log
+Argparser做指令模式
+可以做有GUI的介面，也可以有API指令模式
+考慮透過排成管理器來執行toast或是鬧鐘設定
+查一下windows clock有沒有指令可以下
+可以做一下寫log的function 在toolbox裡面

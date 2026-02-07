@@ -9,6 +9,7 @@ from collections import defaultdict
 from playwright.sync_api import sync_playwright
 from winotify import Notification, audio
 from types import SimpleNamespace
+from datetime import datetime, timedelta
 
 configs = SimpleNamespace(**config_reader())
 URLs = configs.URL if configs.URL else "https://www.thsrc.com.tw/ArticleContent/60dbfb79-ac20-4280-8ffb-b09e7c94f043"
@@ -109,19 +110,44 @@ def get_table_contents(url = URLs['thsr']):
         browser.close()
     return fes_list, table
 
-def win_toast(fes_name, fes_contents, railway_name = "高鐵"):
-    toast = Notification(
-        app_id = f"{railway_name}搶票提醒",
-        title = f"{railway_name}{fes_name}搶票提醒",
-        msg = f"{fes_name}節日期間是:\n{fes_contents['duration']}\n搶票日期:\n{fes_contents['book_date']}",
-        duration = "short"
-    )
+def win_toast(fes_name, fes_duration, book_date, is_fes = True, railway_name = "高鐵"):
+    if is_fes:
+        toast = Notification(
+            app_id = f"{railway_name}搶票提醒",
+            title = f"{railway_name}{fes_name}搶票提醒",
+            msg = f"{fes_name}節日期間:\n{fes_duration}\n搶票日期:\n{book_date}",
+            duration = "short"
+        )
+    else:
+        toast = Notification(
+            app_id = f"{railway_name}搶票提醒",
+            title = f"最近28天沒有需要搶票",
+            msg = "",
+            duration = "short"
+        )
+    toast.show()
     return toast
+
+def check_fes_and_toast(table):
+    toast_search_flag = 0
+    for key, value in table.items():
+        book_timestamp = parse_date_to_timestamp(value['book_date'])['timestamps'][0]
+        currentTime = get_ntp_time()[1]
+        date_search_end = (datetime.fromtimestamp(currentTime) + timedelta(days = 28)).timestamp()
+        if currentTime <= book_timestamp <= date_search_end:
+            win_toast(key, value['duration'], value['book_date'], True)
+            toast_search_flag = 1
+            break
+    if not toast_search_flag:
+        win_toast("", "", "", False)
+    return
 
 if __name__ == "__main__":
     # fes_list, table_contents = get_table_contents()
     # toast = win_toast(fes_list[0], table_contents[fes_list[0]])
     thsr_fes, thsr_table = get_table_contents(URLs['thsr'])
     # tr_fes, tr_table = get_table_contents(URLs['tr'])
-    print(f'{thsr_fes=}')
-    print(f'{thsr_table=}')
+    # print(f'{thsr_fes=}')
+    # print(f'{thsr_table=}')
+    
+    check_fes_and_toast(thsr_table)
