@@ -121,7 +121,7 @@ def parse_date_to_timestamp(date_str):
 
 def get_ntp_time():
     '''
-    return format: 2026-01-31 23:36:51.942642+08:00
+    return format: (datetime(2026-01-31 23:36:51.942642+08:00), utc current timestamp)
     '''
     try:
         client = ntplib.NTPClient()
@@ -134,12 +134,14 @@ def get_ntp_time():
         # 手動設定時區為 UTC+8
         tz_taipei = timezone(timedelta(hours=8))
         dt = datetime.fromtimestamp(utc_timestamp, tz_taipei)
+
         
     except Exception as e:
         raise ValueError("NTP Fail. Please check NTP server pool link.")
     
-    return dt
+    return dt, int(utc_timestamp)
     
 
 if __name__ == '__main__':
     print(parse_date_to_timestamp('2026/05/08 (五) ~ 2026/05/11 (一)'))
+    print(get_ntp_time())
