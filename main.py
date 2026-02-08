@@ -143,13 +143,34 @@ def check_fes_and_toast(table):
         win_toast("", "", "", False)
     return
 
-if __name__ == "__main__":
-
+def get_args():
     argparser = argparse.ArgumentParser(prog = "Tickets reminder",
                                         description = "Tickets reminder for THSR or Taiwan Railway")
     
-    argparser.add_argument('-i', '--init', dest = 'Initialization', help = '', type = bool, default = False)
+    argparser.add_argument('-i', '--init', dest = 'Initialization', type = bool, default = False,
+                           help = 'If want to use command to start up the process, please enter True or it will default false.'
+                           )
+    
+    argparser.add_argument('-w', '--raiway', dest = 'Railway', type = str, default = 'thsr',
+                           help = 'Choose the railway to use: thsr or tr, default is thsr'
+                           )
+    
+    return argparser.parse_args()
 
+def main():
+    args = get_args()
+    choose_railway = args.Raiway
+    if args.Initialization:
+        #TODO
+        pass
+    else:
+        fes, table = get_table_contents(URLs[choose_railway])
+        check_fes_and_toast(table)
+
+    return
+
+if __name__ == "__main__":
+    main()
     # fes_list, table_contents = get_table_contents()
     # toast = win_toast(fes_list[0], table_contents[fes_list[0]])
     thsr_fes, thsr_table = get_table_contents(URLs['thsr'])
