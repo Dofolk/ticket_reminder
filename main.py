@@ -2,6 +2,7 @@ import os
 import re
 import datetime
 import win32com.client
+import argparse
 
 from toolbox import *
 from pprint import pprint
@@ -143,6 +144,12 @@ def check_fes_and_toast(table):
     return
 
 if __name__ == "__main__":
+
+    argparser = argparse.ArgumentParser(prog = "Tickets reminder",
+                                        description = "Tickets reminder for THSR or Taiwan Railway")
+    
+    argparser.add_argument('-i', '--init', dest = 'Initialization', help = '', type = bool, default = False)
+
     # fes_list, table_contents = get_table_contents()
     # toast = win_toast(fes_list[0], table_contents[fes_list[0]])
     thsr_fes, thsr_table = get_table_contents(URLs['thsr'])
